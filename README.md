@@ -1,6 +1,6 @@
-# OpenTelemetry Collector with Trace Hierarchy Processor
+# OpenTelemetry Collector with Filter Remap Processor
 
-This custom OpenTelemetry Collector includes a trace hierarchy processor that groups spans by trace ID, applies filtering rules, and maintains parent-child relationships even when parent spans are dropped.
+This custom OpenTelemetry Collector includes a filter remap processor that groups spans by trace ID, applies filtering rules, and maintains parent-child relationships even when parent spans are dropped.
 
 ## Features
 
