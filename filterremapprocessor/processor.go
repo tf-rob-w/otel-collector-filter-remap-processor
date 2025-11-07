@@ -219,7 +219,6 @@ func (frp *filterRemapProcessor) processTraces(resourceSpans ptrace.ResourceSpan
 			tData = td
 		}
 
-		// actualData := d.(*traceData)
 		if loaded {
 			tData.SpanCount.Add(lenSpans)
 			tData.LastSpanArrivalNanos.Store(currTime.UnixNano())
