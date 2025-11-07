@@ -432,9 +432,13 @@ env:
 
 ### Scaling Guidelines
 
-- **Small workload** (< 1000 traces/sec): 1-2 replicas, 1Gi memory
-- **Medium workload** (1000-5000 traces/sec): 3-5 replicas, 2Gi memory  
-- **Large workload** (> 5000 traces/sec): 5-10 replicas, 4Gi memory
+- **Small workload** (< 1000 traces/sec): 1-2 replicas, 4Gi memory
+- **Medium workload** (1000-5000 traces/sec): 3-5 replicas, 8Gi memory  
+- **Large workload** (> 5000 traces/sec): 5-10 replicas, 16Gi memory
+
+*Note:*
+*The provided docker-compose.yaml file deploys a grafana dashboard which includes collector memory metrics.*
+*It's recommended to perform some benchmarking with expected workloads and monitor the memory usage and size deployment infrastructure accordingly*
 
 ## Development
 
