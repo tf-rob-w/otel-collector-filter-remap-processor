@@ -15,6 +15,13 @@ import (
 	// "github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottlspanevent"
 )
 
+type OverflowStrategy string
+
+const (
+	OverflowDrop    OverflowStrategy = "drop"
+	OverflowForward OverflowStrategy = "forward"
+)
+
 // Config is the configuration for the filter remap processor. (filterprocessor says it's the configuration for Resource processor? Need to figure out what this means...)
 type Config struct {
 	ErrorMode ottl.ErrorMode `mapstructure:"error_mode"`
@@ -41,6 +48,20 @@ type Config struct {
 	// By default, we will just forward any orphaned spans without remapping them, but if this is set to true, we will remap the orphaned spans to root spans.
 	RemapOrphanedSpans bool `mapstructure:"remap_orphaned_spans"`
 	FlushOnShutdown    bool `mapstructure:"flush_on_shutdown"`
+	// Forward queue size is the number of traces that can be queued for remapping and forwarding to the next consumer
+	// Optional, default is 2 * ExpectedNewTracesPerSec
+	// Recommended to test with default value first with expected workload, then adjust based on p99 of forward trace latency
+	ForwardQueueSize uint64 `mapstructure:"forward_queue_size"`
+	// Forward worker concurrency is the number of worker threads that will be used to remap and forward traces to the next consumer
+	// Optional, default is min(8, GOMAXPROCS)
+	ForwardWorkerConcurrency int `mapstructure:"forward_worker_concurrency"`
+	// How to handle forward queue overflows (more traces added to queue than ForwardQueueSize)
+	// Options - drop|forward
+	// drop (default, recommended) - if the forward trace queue is full, drop the trace entirely, will result in lost data.
+	// forward - if the forward trace queue is full, the processor will forward the trace to the next consumer by creating a new goroutine to forward the trace, if volume is too high this could result in a lot of goroutines being created.
+	// Recommended approach to prevent data loss is to carefully configure ForwardQueueSize and ForwardWorkerConcurrency to match the expected workload.
+	// Note: if the volume is too high, the processor will still drop traces if the overflow strategy is set to drop.
+	OverflowStrategy OverflowStrategy `mapstructure:"overflow_strategy"`
 }
 
 type TraceFilters struct {
@@ -60,7 +81,6 @@ func (cfg *Config) Validate() error {
 		errs = multierr.Append(errs, err)
 	}
 
-	// TODO: Do we care about span events?
 	if cfg.Traces.SpanEventConditions != nil {
 		_, err := utils.NewBoolExprForSpanEvent(cfg.Traces.SpanEventConditions, utils.StandardSpanEventFuncs(), ottl.PropagateError, component.TelemetrySettings{Logger: zap.NewNop()})
 		errs = multierr.Append(errs, err)
@@ -88,6 +108,21 @@ func (cfg *Config) Validate() error {
 
 	if cfg.NumTraces < 1 {
 		err := errors.New("num_traces must be greater than 0")
+		errs = multierr.Append(errs, err)
+	}
+
+	if cfg.ForwardQueueSize < 0 {
+		err := errors.New("forward_queue_size must be greater than 0")
+		errs = multierr.Append(errs, err)
+	}
+
+	if cfg.ForwardWorkerConcurrency < 0 {
+		err := errors.New("forward_worker_concurrency must be greater than 0")
+		errs = multierr.Append(errs, err)
+	}
+
+	if cfg.OverflowStrategy != OverflowDrop && cfg.OverflowStrategy != OverflowForward {
+		err := errors.New("overflow_strategy must be either 'drop' or 'forward'")
 		errs = multierr.Append(errs, err)
 	}
 

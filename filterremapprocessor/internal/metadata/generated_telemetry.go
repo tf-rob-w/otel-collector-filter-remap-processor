@@ -90,7 +90,7 @@ func NewTelemetryBuilder(settings component.TelemetrySettings, options ...Teleme
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapMaxRetentionTickProcessingTime, err = builder.meter.Int64Histogram(
 		"otelcol_processor_filter_remap_max_retention_tick_processing_time",
-		metric.WithDescription("Time (in milliseconds) for each tick of the max retention of the trace hierarchy processor"),
+		metric.WithDescription("Time (in milliseconds) for each tick of the max retention of the filter remap processor"),
 		metric.WithUnit("ms"),
 		metric.WithExplicitBucketBoundaries([]float64{1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000}...),
 	)
@@ -122,7 +122,7 @@ func NewTelemetryBuilder(settings component.TelemetrySettings, options ...Teleme
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapTickProcessingTime, err = builder.meter.Int64Histogram(
 		"otelcol_processor_filter_remap_tick_processing_time",
-		metric.WithDescription("Time (in milliseconds) for each tick of the trace hierarchy processor"),
+		metric.WithDescription("Time (in milliseconds) for each tick of the filter remap processor"),
 		metric.WithUnit("ms"),
 		metric.WithExplicitBucketBoundaries([]float64{1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000}...),
 	)
@@ -135,8 +135,8 @@ func NewTelemetryBuilder(settings component.TelemetrySettings, options ...Teleme
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapTraceRemapLatency, err = builder.meter.Int64Histogram(
 		"otelcol_processor_filter_remap_trace_remap_latency",
-		metric.WithDescription("Latency (in milliseconds) of the span remapping process for each trace"),
-		metric.WithUnit("ms"),
+		metric.WithDescription("Latency (in microseconds) of the span remapping process for each trace"),
+		metric.WithUnit("µs"),
 		metric.WithExplicitBucketBoundaries([]float64{1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000}...),
 	)
 	errs = errors.Join(errs, err)

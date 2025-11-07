@@ -32,7 +32,7 @@ Latency (in milliseconds) of the trace forwarding process
 
 ### otelcol_processor_filter_remap_max_retention_tick_processing_time
 
-Time (in milliseconds) for each tick of the max retention of the trace hierarchy processor
+Time (in milliseconds) for each tick of the max retention of the filter remap processor
 
 | Unit | Metric Type | Value Type |
 | ---- | ----------- | ---------- |
@@ -72,7 +72,7 @@ Count of spans per trace
 
 ### otelcol_processor_filter_remap_tick_processing_time
 
-Time (in milliseconds) for each tick of the trace hierarchy processor
+Time (in milliseconds) for each tick of the filter remap processor
 
 | Unit | Metric Type | Value Type |
 | ---- | ----------- | ---------- |
@@ -88,11 +88,11 @@ Count of traces that needed to be dropped before the configured wait time
 
 ### otelcol_processor_filter_remap_trace_remap_latency
 
-Latency (in milliseconds) of the span remapping process for each trace
+Latency (in microseconds) of the span remapping process for each trace
 
 | Unit | Metric Type | Value Type |
 | ---- | ----------- | ---------- |
-| ms | Histogram | Int |
+| µs | Histogram | Int |
 
 ### otelcol_processor_filter_remap_traces_on_memory
 

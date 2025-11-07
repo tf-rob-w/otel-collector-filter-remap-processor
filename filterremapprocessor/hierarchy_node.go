@@ -5,9 +5,9 @@ import (
 	"go.opentelemetry.io/collector/pdata/ptrace"
 )
 
-// spanAndScope a structure for holding information about span and its instrumentation scope.
+// spanAndScope is a structure for holding information about span and its instrumentation scope.
 // required for preserving the instrumentation library information while sampling.
-// We use pointers there to fast find the span in the map.
+// We use pointers here to fast find the span in the map.
 type spanAndScope struct {
 	span                 *ptrace.Span
 	instrumentationScope *pcommon.InstrumentationScope
@@ -28,11 +28,7 @@ type retainedNode interface {
 	SpanData() *spanAndScope
 }
 
-// Can use ptrace.Span.SetParentSpanId() to set the parent span id
 type retainedHierarchyNode struct {
-	// spanId       pcommon.SpanID
-	// traceId      pcommon.TraceID
-	// parentSpanId pcommon.SpanID
 	spanData       *spanAndScope
 	parentRetained bool
 }

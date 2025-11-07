@@ -71,7 +71,7 @@ func AssertEqualProcessorFilterRemapForwardTraceLatency(t *testing.T, tt *compon
 func AssertEqualProcessorFilterRemapMaxRetentionTickProcessingTime(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.HistogramDataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_max_retention_tick_processing_time",
-		Description: "Time (in milliseconds) for each tick of the max retention of the trace hierarchy processor",
+		Description: "Time (in milliseconds) for each tick of the max retention of the filter remap processor",
 		Unit:        "ms",
 		Data: metricdata.Histogram[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -147,7 +147,7 @@ func AssertEqualProcessorFilterRemapSpansPerTrace(t *testing.T, tt *componenttes
 func AssertEqualProcessorFilterRemapTickProcessingTime(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.HistogramDataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_tick_processing_time",
-		Description: "Time (in milliseconds) for each tick of the trace hierarchy processor",
+		Description: "Time (in milliseconds) for each tick of the filter remap processor",
 		Unit:        "ms",
 		Data: metricdata.Histogram[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -178,8 +178,8 @@ func AssertEqualProcessorFilterRemapTraceDroppedTooEarly(t *testing.T, tt *compo
 func AssertEqualProcessorFilterRemapTraceRemapLatency(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.HistogramDataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_trace_remap_latency",
-		Description: "Latency (in milliseconds) of the span remapping process for each trace",
-		Unit:        "ms",
+		Description: "Latency (in microseconds) of the span remapping process for each trace",
+		Unit:        "µs",
 		Data: metricdata.Histogram[int64]{
 			Temporality: metricdata.CumulativeTemporality,
 			DataPoints:  dps,

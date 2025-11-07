@@ -2,6 +2,8 @@ package filterremapprocessor
 
 import (
 	"context"
+	"runtime"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -18,34 +20,33 @@ import (
 	"github.com/luke-moehlenbrock/otel-collector-filter-remap-processor/filterremapprocessor/internal/metadata"
 	"github.com/luke-moehlenbrock/otel-collector-filter-remap-processor/filterremapprocessor/internal/utils"
 
-	// "github.com/open-telemetry/opentelemetry-collector-contrib/internal/filter/expr"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottlspan"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottlspanevent"
 )
 
 type filterRemapProcessor struct {
-	ctx                context.Context
-	skipSpanExpr       utils.BoolExpr[ottlspan.TransformContext]      // if evaluates to True, drop span
-	skipSpanEventExpr  utils.BoolExpr[ottlspanevent.TransformContext] // if evaluates to True, drop span event
-	maxRetentionTicker utils.Ticker
-	processingTicker   utils.Ticker
-	tickerFrequency    time.Duration
-	nextConsumer       consumer.Traces
-	// For the size of forwardTraceChan, we need to do some extensive benchmark testing to determine what the p99 is for the time it takes to forward a trace
-	// to the next consumer for different trace sizes, then use expectedNewTracesPerSec plus avgSpansPerTrace to determine the size of the channel
-	forwardTraceChan   chan *traceData
-	numTracesOnMap     *atomic.Uint64
-	maxTraceRetention  time.Duration
-	lastSpanTimeout    time.Duration
-	maxNumTraces       uint64
-	avgSpansPerTrace   uint64
-	dropRootSpans      bool
-	remapOrphanedSpans bool
-	idToTrace          *lru.Cache[pcommon.TraceID, *traceData]
-	telemetry          *metadata.TelemetryBuilder
-	// deleteChan        chan pcommon.TraceID // TODO: deleteChan could be better implemented with a custom LRU cache that can delete traceIds when a trace is dropped
-	logger          *zap.Logger
-	flushOnShutdown bool
+	ctx                      context.Context
+	skipSpanExpr             utils.BoolExpr[ottlspan.TransformContext]      // if evaluates to True, drop span
+	skipSpanEventExpr        utils.BoolExpr[ottlspanevent.TransformContext] // if evaluates to True, drop span event
+	maxRetentionTicker       utils.Ticker
+	processingTicker         utils.Ticker
+	tickerFrequency          time.Duration
+	nextConsumer             consumer.Traces
+	forwardTraceChan         chan *traceData
+	numTracesOnMap           *atomic.Uint64
+	maxTraceRetention        time.Duration
+	lastSpanTimeout          time.Duration
+	maxNumTraces             uint64
+	avgSpansPerTrace         uint64
+	dropRootSpans            bool
+	remapOrphanedSpans       bool
+	idToTrace                *lru.Cache[pcommon.TraceID, *traceData]
+	telemetry                *metadata.TelemetryBuilder
+	logger                   *zap.Logger
+	flushOnShutdown          bool
+	forwardWorkerConcurrency int
+	wg                       sync.WaitGroup
+	overflowStrategy         OverflowStrategy
 }
 
 func newFilterRemapProcessor(ctx context.Context, set processor.Settings, nextConsumer consumer.Traces, cfg *Config) (*filterRemapProcessor, error) {
@@ -57,20 +58,31 @@ func newFilterRemapProcessor(ctx context.Context, set processor.Settings, nextCo
 		return nil, err
 	}
 
+	if cfg.ForwardQueueSize == 0 {
+		cfg.ForwardQueueSize = max(4096, 2*cfg.ExpectedNewTracesPerSec)
+	}
+
+	if cfg.ForwardWorkerConcurrency == 0 {
+		cfg.ForwardWorkerConcurrency = min(8, runtime.GOMAXPROCS(0))
+	}
+
 	frp := &filterRemapProcessor{
-		ctx:                ctx,
-		logger:             set.Logger,
-		nextConsumer:       nextConsumer,
-		forwardTraceChan:   make(chan *traceData, max(4096, 8*cfg.ExpectedNewTracesPerSec)),
-		dropRootSpans:      cfg.DropRootSpans,
-		remapOrphanedSpans: cfg.RemapOrphanedSpans,
-		maxNumTraces:       cfg.NumTraces,
-		maxTraceRetention:  cfg.MaxTraceRetention,
-		lastSpanTimeout:    cfg.LastSpanTimeout,
-		telemetry:          telemetry,
-		numTracesOnMap:     &atomic.Uint64{},
-		avgSpansPerTrace:   cfg.ExpectedAverageSpansPerTrace,
-		flushOnShutdown:    cfg.FlushOnShutdown,
+		ctx:                      ctx,
+		logger:                   set.Logger,
+		nextConsumer:             nextConsumer,
+		forwardTraceChan:         make(chan *traceData, cfg.ForwardQueueSize),
+		dropRootSpans:            cfg.DropRootSpans,
+		remapOrphanedSpans:       cfg.RemapOrphanedSpans,
+		maxNumTraces:             cfg.NumTraces,
+		maxTraceRetention:        cfg.MaxTraceRetention,
+		lastSpanTimeout:          cfg.LastSpanTimeout,
+		telemetry:                telemetry,
+		numTracesOnMap:           &atomic.Uint64{},
+		avgSpansPerTrace:         cfg.ExpectedAverageSpansPerTrace,
+		flushOnShutdown:          cfg.FlushOnShutdown,
+		forwardWorkerConcurrency: cfg.ForwardWorkerConcurrency,
+		wg:                       sync.WaitGroup{},
+		overflowStrategy:         cfg.OverflowStrategy,
 	}
 
 	// Initialize LRU cache for traces
@@ -98,9 +110,6 @@ func newFilterRemapProcessor(ctx context.Context, set processor.Settings, nextCo
 	frp.processingTicker = &utils.ProcessorTicker{OnTickFunc: frp.onTick}
 	frp.maxRetentionTicker = &utils.ProcessorTicker{OnTickFunc: frp.maxRetentionOnTick}
 
-	// TODO: Add options for testing purposes
-	// TODO: Also, testing
-
 	if frp.tickerFrequency == 0 {
 		frp.tickerFrequency = time.Second
 	}
@@ -120,7 +129,7 @@ func (frp *filterRemapProcessor) filterSpansByTraceId(resourceSpans ptrace.Resou
 	traceIdToSpans := make(map[pcommon.TraceID][]hierarchyNode)
 	resource := resourceSpans.Resource()
 	resourceSchemaUrl := resourceSpans.SchemaUrl()
-	//ilss stands for instrumentation library scope spans. We can't just abbreviate "scope spans" for obvious reasons and iss would be a weird abbreviation.
+	//ilss stands for instrumentation library scope spans.
 	ilss := resourceSpans.ScopeSpans()
 	var errors error
 	for j := 0; j < ilss.Len(); j++ {
@@ -271,6 +280,23 @@ func (frp *filterRemapProcessor) shouldFilterSpan(span ptrace.Span, is pcommon.I
 		}
 	}
 
+	if frp.skipSpanEventExpr != nil {
+		var evalErr error
+		span.Events().RemoveIf(func(spanEvent ptrace.SpanEvent) bool {
+			skipSpanEvent, err := frp.skipSpanEventExpr.Eval(frp.ctx, ottlspanevent.NewTransformContext(spanEvent, span, is, resource, scope, resourceSpans))
+			if err != nil {
+				evalErr = multierr.Append(evalErr, err)
+				return false
+			}
+			if skipSpanEvent {
+				return true
+			}
+			return false
+		})
+		if evalErr != nil {
+			return false, evalErr
+		}
+	}
 	spanEvents := span.Events()
 	for i := 0; i < spanEvents.Len(); i++ {
 		if frp.skipSpanEventExpr == nil {
@@ -294,7 +320,6 @@ func (frp *filterRemapProcessor) onTick() {
 
 	for _, traceId := range frp.idToTrace.Keys() {
 		trace, ok := frp.idToTrace.Peek(traceId)
-		// Since we're getting all keys in the cache is there actually any reason to check if it's in the cache?
 		if !ok {
 			continue
 		}
@@ -331,9 +356,9 @@ func (frp *filterRemapProcessor) evictTrace(_ pcommon.TraceID, trace *traceData)
 	select {
 	case frp.forwardTraceChan <- trace:
 	default:
-		// queue overflow
-		// TODO: Don't want to spawn a bunch of new goroutines here, find a better way to handle overflows
-		go frp.forwardTrace(trace)
+		if frp.overflowStrategy == OverflowForward {
+			go frp.forwardTrace(trace)
+		}
 		frp.telemetry.ProcessorFilterRemapForwardQueueOverflows.Add(frp.ctx, 1)
 	}
 	frp.numTracesOnMap.Add(^uint64(0))
@@ -354,12 +379,13 @@ func (frp *filterRemapProcessor) forwardTrace(trace *traceData) {
 	trace.HierarchyMap.RUnlock()
 	startTime := time.Now()
 	remappedTrace := buildRemappedTrace(allSpansRetained)
-	frp.telemetry.ProcessorFilterRemapTraceRemapLatency.Record(frp.ctx, time.Since(startTime).Milliseconds())
+	frp.telemetry.ProcessorFilterRemapTraceRemapLatency.Record(frp.ctx, time.Since(startTime).Microseconds())
 	frp.nextConsumer.ConsumeTraces(frp.ctx, remappedTrace)
 	frp.telemetry.ProcessorFilterRemapForwardTraceLatency.Record(frp.ctx, time.Since(currTime).Milliseconds())
 }
 
 func (frp *filterRemapProcessor) forwardTraceWorker() {
+	defer frp.wg.Done()
 	for trace := range frp.forwardTraceChan {
 		frp.forwardTrace(trace)
 	}
@@ -374,13 +400,15 @@ func (frp *filterRemapProcessor) Start(context.Context, component.Host) error {
 	// Start the max retention ticker at half of the max trace retention or 15 seconds, whichever is smaller
 	// might be a bit hacky, will want to see how long the max retention ticker takes to run since it has to loop through all traces and use that to come up with a better duration.
 	frp.maxRetentionTicker.Start(min(frp.maxTraceRetention/2, 15*time.Second))
-	go frp.forwardTraceWorker()
+	for i := 0; i < frp.forwardWorkerConcurrency; i++ {
+		frp.wg.Add(1)
+		go frp.forwardTraceWorker()
+	}
+
 	return nil
 }
 
-// TODO: Should we flush remaining traces?
 func (frp *filterRemapProcessor) Shutdown(context.Context) error {
-	// frp.spanBatcher.Stop()
 	frp.processingTicker.Stop()
 	frp.maxRetentionTicker.Stop()
 	if frp.flushOnShutdown {
@@ -390,5 +418,6 @@ func (frp *filterRemapProcessor) Shutdown(context.Context) error {
 	}
 	// Close the forward trace channel to signal the worker to exit
 	close(frp.forwardTraceChan)
+	frp.wg.Wait()
 	return nil
 }

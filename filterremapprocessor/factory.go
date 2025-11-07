@@ -22,7 +22,6 @@ func NewFactory() processor.Factory {
 	)
 }
 
-// Note: Need to keep in mind that the values we don't set a default for will be set to 0, so explicitly set values where that is not okay and add checks elsewhere
 func createDefaultConfig() component.Config {
 	return &Config{
 		ErrorMode:                    ottl.PropagateError,
@@ -34,6 +33,9 @@ func createDefaultConfig() component.Config {
 		DropRootSpans:                false,
 		RemapOrphanedSpans:           false,
 		FlushOnShutdown:              false,
+		ForwardQueueSize:             0,
+		ForwardWorkerConcurrency:     0,
+		OverflowStrategy:             OverflowForward,
 	}
 }
 

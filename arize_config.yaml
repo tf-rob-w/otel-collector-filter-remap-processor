@@ -15,25 +15,26 @@ extensions:
     endpoint: 0.0.0.0:1777
 
 processors:
+  # Transform processor to enable sending unfiltered traces to arize for debugging purposes.
   transform:
     error_mode: ignore
     trace_statements:
-      - set(resource.attributes["openinference.project.name"], "Span Remap Test 7 - Unfiltered")
+      - set(resource.attributes["openinference.project.name"], "Unfiltered Traces")
   filter_remap:
     # Maximum time to retain a trace before forwarding (default: 30s)
-    max_trace_retention: 600s
+    max_trace_retention: 300s
     
     # Time to wait after last span before forwarding (default: 5s)
-    last_span_timeout: 30s
+    last_span_timeout: 20s
     
     # Number of traces to keep in memory
-    num_traces: 50000
+    num_traces: 5000
     
     # Expected traces per second (helps with memory allocation)
-    expected_new_traces_per_sec: 1000
+    expected_new_traces_per_sec: 20
     
     # Expected average spans per trace (helps with memory allocation)
-    expected_average_spans_per_trace: 100
+    expected_average_spans_per_trace: 50
     
     # Drop root spans if they match the filter (default: false)
     drop_root_spans: false
@@ -50,9 +51,8 @@ processors:
       # Drop spans based on conditions
       span:
         # Drop non-arize spans
-        - 'attributes["openinference.span.kind"] == nil'
-      
-  
+        - 'attributes["openinference.span.kind"] == nil'  
+
   # Batch processor to optimize exports
   batch:
     timeout: 1s
@@ -101,9 +101,8 @@ service:
       receivers: [otlp]
       processors: [transform]
       exporters: [otlp]
-      # exporters: [nop]
+
     traces/filtered:
       receivers: [otlp]
       processors: [filter_remap]
       exporters: [otlp]
-      # exporters: [nop]

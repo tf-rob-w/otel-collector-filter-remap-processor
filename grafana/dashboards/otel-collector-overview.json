@@ -362,6 +362,65 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 28
+      },
+      "id": 13,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+        "expr": "sum(increase(otelcol_processor_filter_remap_forward_queue_overflows[5m])) / 5 or on() vector(0)",
+          "refId": "A"
+        }
+      ],
+      "title": "Forward Queue Overflows (overflows/min)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "palette-classic"
           },
           "custom": {
@@ -835,7 +894,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 28
+        "y": 20
       },
       "id": 11,
       "options": {
@@ -994,6 +1053,133 @@
         }
       ],
       "title": "Traces on Memory",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          },
+          "unit": "µs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.9, sum by(le) (rate(otelcol_processor_filter_remap_trace_remap_latency_bucket[5m]))) or histogram_quantile(0.9, sum by(le) (rate(otelcol_processor_filter_remap_trace_remap_latency_microseconds_bucket[5m]))) or histogram_quantile(0.9, sum by(le) (rate(otelcol_processor_filter_remap_trace_remap_latency_milliseconds_bucket[5m])))",
+          "legendFormat": "P90 Trace Remap Latency",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by(le) (rate(otelcol_processor_filter_remap_trace_remap_latency_bucket[5m]))) or histogram_quantile(0.95, sum by(le) (rate(otelcol_processor_filter_remap_trace_remap_latency_microseconds_bucket[5m]))) or histogram_quantile(0.95, sum by(le) (rate(otelcol_processor_filter_remap_trace_remap_latency_milliseconds_bucket[5m])))",
+          "legendFormat": "P95 Trace Remap Latency",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.99, sum by(le) (rate(otelcol_processor_filter_remap_trace_remap_latency_bucket[5m]))) or histogram_quantile(0.99, sum by(le) (rate(otelcol_processor_filter_remap_trace_remap_latency_microseconds_bucket[5m]))) or histogram_quantile(0.99, sum by(le) (rate(otelcol_processor_filter_remap_trace_remap_latency_milliseconds_bucket[5m])))",
+          "legendFormat": "P99 Trace Remap Latency",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "(rate(otelcol_processor_filter_remap_trace_remap_latency_sum[5m]) / rate(otelcol_processor_filter_remap_trace_remap_latency_count[5m])) or (rate(otelcol_processor_filter_remap_trace_remap_latency_microseconds_sum[5m]) / rate(otelcol_processor_filter_remap_trace_remap_latency_microseconds_count[5m])) or (1000 * rate(otelcol_processor_filter_remap_trace_remap_latency_milliseconds_sum[5m]) / rate(otelcol_processor_filter_remap_trace_remap_latency_milliseconds_count[5m]))",
+          "legendFormat": "Average Trace Remap Latency",
+          "refId": "D"
+        }
+      ],
+      "title": "Trace Remap Latency (Percentiles)",
       "type": "timeseries"
     }
   ],

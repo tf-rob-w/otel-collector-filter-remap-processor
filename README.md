@@ -143,6 +143,66 @@ processors:
         - 'attributes["log.level"] == "DEBUG"'
 ```
 
+### Configuration Options (reference)
+
+- `error_mode`:
+  - Controls how OTTL evaluation errors are handled during filtering.
+  - Typical values from OTTL: `propagate_error` (default) or `ignore`.
+  - If errors are propagated, the processor records an error metric and skips the faulty evaluation.
+
+- `max_trace_retention`:
+  - Maximum wall‑clock time to retain a trace before forwarding, regardless of new spans.
+  - Type: duration (e.g., `30s`, `2m`).
+  - Validation: must be > 0 and ≤ 10m.
+
+- `last_span_timeout`:
+  - If no spans arrive for this duration, the trace is remapped and forwarded.
+  - Type: duration (e.g., `5s`).
+  - Validation: must be > 0.
+
+- `num_traces`:
+  - Capacity of the in‑memory LRU for active traces.
+  - Validation: must be ≥ 1.
+
+- `expected_new_traces_per_sec`:
+  - Expected incoming traces per second. Used for sizing internal structures and defaults.
+  - Also used to derive the default `forward_queue_size`.
+
+- `expected_average_spans_per_trace`:
+  - Hint used to pre‑allocate internal collections for better performance.
+  - Validation: must be ≥ 1.
+
+- `drop_root_spans`:
+  - If true, root spans that match filters are dropped; otherwise, roots are retained unless filtered by OTTL.
+
+- `remap_orphaned_spans`:
+  - If a span arrives after a trace was already forwarded (past `last_span_timeout`), remap it to a root span when true.
+  - If false, such late spans are forwarded as‑is without attempting remapping to a parent.
+
+- `flush_on_shutdown`:
+  - If true, remaining traces are forwarded during shutdown (synchronously), before worker/channel teardown.
+
+- `forward_queue_size`:
+  - Bounded queue size for traces waiting to be remapped/forwarded by workers.
+  - Type: integer; Optional. Default when unset: `max(4096, 2 * expected_new_traces_per_sec)`.
+  - Guidance: size to absorb short bursts, not to hide sustained overload. Often the default is sufficient.
+
+- `forward_worker_concurrency`:
+  - Number of worker goroutines consuming from the forward queue.
+  - Type: integer; Optional. Default when unset: `min(8, GOMAXPROCS)`.
+  - Throughput scales roughly with workers / average forward latency.
+
+- `overflow_strategy`:
+  - What to do when `forward_queue_size` is full at eviction time.
+  - Allowed values:
+    - `drop` (recommended default): drops the trace and increments overflow metrics.
+    - `forward`: spawns a goroutine to remap and forward immediately, bypassing the queue. Prevents data loss but may increase memory pressure if overused.
+  - Note: The eviction callback is synchronous; it never blocks the LRU. The `forward` option creates async work; use with care.
+
+- `traces.span` / `traces.spanevent`:
+  - Arrays of OTTL boolean expressions. When an expression evaluates to true for a span (or span event), that span is considered “sampled/dropped” for remapping purposes.
+  - See examples below for common patterns.
+
 ### OTTL Filter Examples
 
 ```yaml

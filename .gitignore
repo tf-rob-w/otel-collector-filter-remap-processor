@@ -25,3 +25,6 @@ examples/
 # OS
 .DS_Store
 
+# Just for local testing with Phoenix, doesn't need to go to github
+phoenix_config.yaml
+

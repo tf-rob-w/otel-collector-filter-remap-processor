@@ -22,7 +22,7 @@ telemetry:
         bucket_boundaries: [1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000]
 
     processor_filter_remap_max_retention_tick_processing_time:
-        description: Time (in milliseconds) for each tick of the max retention of the filter remap processor
+      description: Time (in milliseconds) for each tick of the max retention of the filter remap processor
       unit: ms
       enabled: true
       histogram:
@@ -46,20 +46,12 @@ telemetry:
         monotonic: true
 
     processor_filter_remap_trace_remap_latency: # Done
-      description: Latency (in milliseconds) of the span remapping process for each trace
-      unit: ms
+      description: Latency (in microseconds) of the span remapping process for each trace
+      unit: µs
       enabled: true
       histogram:
         value_type: int
         bucket_boundaries: [1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000]
-      
-    # processor_filter_remap_timer_latency: # Done
-    #   description: Latency (in milliseconds) of the span remapping process for each trace
-    #   unit: ms
-    #   enabled: true
-    #   histogram:
-    #     value_type: int
-    #     bucket_boundaries: [1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000]
 
     processor_filter_remap_span_decision_latency: # Done
       description: Latency (in microseconds) of the span decision process for each trace

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"go.opentelemetry.io/collector/pdata/pcommon"
-	// "go.opentelemetry.io/collector/pdata/ptrace"
 )
 
 type traceData struct {
@@ -48,14 +47,13 @@ func (hm *hierarchyMap) remapHierarchy(remapOrphanedSpans bool) {
 		default:
 			continue
 		}
-
 	}
-
 }
 
 // TrySetNextRetainedParent takes a spanId and iterates through the parent hierarchy from this span until it finds a retained parent
-// it sets this parent as the parent for any dropeed spans that we see along the way, to avoid having to do lookups for all of the dropped nodes for every span
+// it sets this parent as the parent for any dropped spans that we see along the way, to avoid having to do lookups for all of the dropped nodes for every span
 // If remapOrphanedSpans is false, orphaned spans will keep their original parent ID; if true, they will be remapped to root
+// Orphaned spans may occur if a batch of spans arrive after the last span timeout when the trace has already been forwarded.
 func (hm *hierarchyMap) TrySetNextRetainedParent(spanId pcommon.SpanID, remapOrphanedSpans bool) {
 	node, ok := hm.m[spanId]
 	if !ok {
@@ -77,7 +75,6 @@ func (hm *hierarchyMap) TrySetNextRetainedParent(spanId pcommon.SpanID, remapOrp
 		if parentId.IsEmpty() {
 			//need to do this just to set parent retained if the parent is null.
 			//this will only happen if dropRootSpans is true and the root span is dropped
-
 			for _, dNode := range intermediateDroppedNodes {
 				dNode.setParentId(parentId, true)
 			}
@@ -128,6 +125,5 @@ func (hm *hierarchyMap) TrySetNextRetainedParent(spanId pcommon.SpanID, remapOrp
 			node.setParentId(parentId, true)
 			return
 		}
-
 	}
 }
