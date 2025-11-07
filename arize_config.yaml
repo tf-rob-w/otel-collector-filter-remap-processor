@@ -99,10 +99,10 @@ service:
     # traces pipeline is only used for sending unfiltered traces to arize for debugging purposes, not necessary for production
     traces:
       receivers: [otlp]
-      processors: [transform]
+      processors: [transform, batch]
       exporters: [otlp]
 
     traces/filtered:
       receivers: [otlp]
-      processors: [filter_remap]
+      processors: [filter_remap, batch]
       exporters: [otlp]
