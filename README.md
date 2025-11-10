@@ -7,7 +7,7 @@ This project contains a custom OpenTelemetry Collector Processor that drops span
 - **Trace Buffering**: Groups spans by trace ID and buffers them in memory
 - **OTTL-based Filtering**: Apply complex filtering rules using OpenTelemetry Transformation Language
 - **Hierarchy Preservation**: Maintains span relationships when filtering, no orphaned spans
-- **Production Ready**: Includes health checks, metrics, and profiling endpoints
+- **Production Ready**: Includes health checks and metrics
 
 ## Quick Start
 
