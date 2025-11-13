@@ -6,7 +6,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/luke-moehlenbrock/otel-collector-filter-remap-processor/filterremapprocessor/internal/metadata"
+	"github.com/tf-rob-w/otel-collector-filter-remap-processor/filterremapprocessor/internal/metadata"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl"
 	"go.opentelemetry.io/collector/component"

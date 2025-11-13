@@ -9,8 +9,8 @@ import (
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 
-	"github.com/luke-moehlenbrock/otel-collector-filter-remap-processor/filterremapprocessor/internal/utils"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl"
+	"github.com/tf-rob-w/otel-collector-filter-remap-processor/filterremapprocessor/internal/utils"
 	// "github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottlspan"
 	// "github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottlspanevent"
 )
@@ -73,7 +73,6 @@ type TraceFilters struct {
 var _ component.Config = (*Config)(nil)
 
 func (cfg *Config) Validate() error {
-
 	var errs error
 
 	if cfg.Traces.SpanConditions != nil {

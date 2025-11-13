@@ -17,8 +17,8 @@ import (
 	"go.opentelemetry.io/collector/processor"
 	"go.uber.org/multierr"
 
-	"github.com/luke-moehlenbrock/otel-collector-filter-remap-processor/filterremapprocessor/internal/metadata"
-	"github.com/luke-moehlenbrock/otel-collector-filter-remap-processor/filterremapprocessor/internal/utils"
+	"github.com/tf-rob-w/otel-collector-filter-remap-processor/filterremapprocessor/internal/metadata"
+	"github.com/tf-rob-w/otel-collector-filter-remap-processor/filterremapprocessor/internal/utils"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottlspan"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottlspanevent"
@@ -129,7 +129,7 @@ func (frp *filterRemapProcessor) filterSpansByTraceId(resourceSpans ptrace.Resou
 	traceIdToSpans := make(map[pcommon.TraceID][]hierarchyNode)
 	resource := resourceSpans.Resource()
 	resourceSchemaUrl := resourceSpans.SchemaUrl()
-	//ilss stands for instrumentation library scope spans.
+	// ilss stands for instrumentation library scope spans.
 	ilss := resourceSpans.ScopeSpans()
 	var errors error
 	for j := 0; j < ilss.Len(); j++ {
@@ -145,7 +145,6 @@ func (frp *filterRemapProcessor) filterSpansByTraceId(resourceSpans ptrace.Resou
 
 			startTime := time.Now()
 			drop, err := frp.shouldFilterSpan(span, is, resource, scope, resourceSpans)
-
 			if err != nil {
 				frp.telemetry.ProcessorFilterRemapOttlEvaluationError.Add(frp.ctx, 1)
 				errors = multierr.Append(errors, err)
@@ -230,7 +229,6 @@ func (frp *filterRemapProcessor) processTraces(resourceSpans ptrace.ResourceSpan
 	}
 
 	frp.telemetry.ProcessorFilterRemapNewTraceIDReceived.Add(frp.ctx, newTraceIDs)
-
 }
 
 func buildRemappedTrace(spanAndScopes []spanAndScope) ptrace.Traces {
@@ -323,7 +321,7 @@ func (frp *filterRemapProcessor) onTick() {
 			continue
 		}
 		if currTime.UnixNano()-trace.LastSpanArrivalNanos.Load() > frp.lastSpanTimeout.Nanoseconds() {
-			//Remove will trigger evictTrace which will remap the trace hierarchy and forward the trace to the next consumer
+			// Remove will trigger evictTrace which will remap the trace hierarchy and forward the trace to the next consumer
 			frp.idToTrace.Remove(traceId)
 		} else {
 			// idToTrace.Keys() returns keys from oldest to newest, so as soon as we see a trace where the most recent span is within the last span timeout, we can stop looking
