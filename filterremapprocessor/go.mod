@@ -1,4 +1,4 @@
-module github.com/luke-moehlenbrock/otel-collector-filter-remap-processor/filterremapprocessor
+module github.com/tf-rob-w/otel-collector-filter-remap-processor/filterremapprocessor
 
 go 1.24.7
 
