@@ -24,7 +24,7 @@ func NewSettings(tt *componenttest.Telemetry) processor.Settings {
 func AssertEqualProcessorFilterRemapCountSpansSampled(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.DataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_count_spans_sampled",
-		Description: "Count of spans that were sampled or not per filter policy",
+		Description: "Count of spans that were sampled or not per filter policy [Development]",
 		Unit:        "{spans}",
 		Data: metricdata.Sum[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -40,7 +40,7 @@ func AssertEqualProcessorFilterRemapCountSpansSampled(t *testing.T, tt *componen
 func AssertEqualProcessorFilterRemapForwardQueueOverflows(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.DataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_forward_queue_overflows",
-		Description: "Count of times the forward trace channel overflowed",
+		Description: "Count of times the forward trace channel overflowed [Development]",
 		Unit:        "{traces}",
 		Data: metricdata.Sum[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -56,7 +56,7 @@ func AssertEqualProcessorFilterRemapForwardQueueOverflows(t *testing.T, tt *comp
 func AssertEqualProcessorFilterRemapForwardTraceLatency(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.HistogramDataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_forward_trace_latency",
-		Description: "Latency (in milliseconds) of the trace forwarding process",
+		Description: "Latency (in milliseconds) of the trace forwarding process [Development]",
 		Unit:        "ms",
 		Data: metricdata.Histogram[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -71,7 +71,7 @@ func AssertEqualProcessorFilterRemapForwardTraceLatency(t *testing.T, tt *compon
 func AssertEqualProcessorFilterRemapMaxRetentionTickProcessingTime(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.HistogramDataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_max_retention_tick_processing_time",
-		Description: "Time (in milliseconds) for each tick of the max retention of the filter remap processor",
+		Description: "Time (in milliseconds) for each tick of the max retention of the filter remap processor [Development]",
 		Unit:        "ms",
 		Data: metricdata.Histogram[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -86,7 +86,7 @@ func AssertEqualProcessorFilterRemapMaxRetentionTickProcessingTime(t *testing.T,
 func AssertEqualProcessorFilterRemapNewTraceIDReceived(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.DataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_new_trace_id_received",
-		Description: "Counts the arrival of new traces",
+		Description: "Counts the arrival of new traces [Development]",
 		Unit:        "{traces}",
 		Data: metricdata.Sum[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -102,7 +102,7 @@ func AssertEqualProcessorFilterRemapNewTraceIDReceived(t *testing.T, tt *compone
 func AssertEqualProcessorFilterRemapOttlEvaluationError(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.DataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_ottl_evaluation_error",
-		Description: "Count of OTTL evaluation errors",
+		Description: "Count of OTTL evaluation errors [Development]",
 		Unit:        "{errors}",
 		Data: metricdata.Sum[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -118,7 +118,7 @@ func AssertEqualProcessorFilterRemapOttlEvaluationError(t *testing.T, tt *compon
 func AssertEqualProcessorFilterRemapSpanDecisionLatency(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.HistogramDataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_span_decision_latency",
-		Description: "Latency (in microseconds) of the span decision process for each trace",
+		Description: "Latency (in microseconds) of the span decision process for each trace [Development]",
 		Unit:        "µs",
 		Data: metricdata.Histogram[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -133,7 +133,7 @@ func AssertEqualProcessorFilterRemapSpanDecisionLatency(t *testing.T, tt *compon
 func AssertEqualProcessorFilterRemapSpansPerTrace(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.DataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_spans_per_trace",
-		Description: "Count of spans per trace",
+		Description: "Count of spans per trace [Development]",
 		Unit:        "{spans}",
 		Data: metricdata.Gauge[int64]{
 			DataPoints: dps,
@@ -147,7 +147,7 @@ func AssertEqualProcessorFilterRemapSpansPerTrace(t *testing.T, tt *componenttes
 func AssertEqualProcessorFilterRemapTickProcessingTime(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.HistogramDataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_tick_processing_time",
-		Description: "Time (in milliseconds) for each tick of the filter remap processor",
+		Description: "Time (in milliseconds) for each tick of the filter remap processor [Development]",
 		Unit:        "ms",
 		Data: metricdata.Histogram[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -162,7 +162,7 @@ func AssertEqualProcessorFilterRemapTickProcessingTime(t *testing.T, tt *compone
 func AssertEqualProcessorFilterRemapTraceDroppedTooEarly(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.DataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_trace_dropped_too_early",
-		Description: "Count of traces that needed to be dropped before the configured wait time",
+		Description: "Count of traces that needed to be dropped before the configured wait time [Development]",
 		Unit:        "{traces}",
 		Data: metricdata.Sum[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -178,7 +178,7 @@ func AssertEqualProcessorFilterRemapTraceDroppedTooEarly(t *testing.T, tt *compo
 func AssertEqualProcessorFilterRemapTraceRemapLatency(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.HistogramDataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_trace_remap_latency",
-		Description: "Latency (in microseconds) of the span remapping process for each trace",
+		Description: "Latency (in microseconds) of the span remapping process for each trace [Development]",
 		Unit:        "µs",
 		Data: metricdata.Histogram[int64]{
 			Temporality: metricdata.CumulativeTemporality,
@@ -193,7 +193,7 @@ func AssertEqualProcessorFilterRemapTraceRemapLatency(t *testing.T, tt *componen
 func AssertEqualProcessorFilterRemapTracesOnMemory(t *testing.T, tt *componenttest.Telemetry, dps []metricdata.DataPoint[int64], opts ...metricdatatest.Option) {
 	want := metricdata.Metrics{
 		Name:        "otelcol_processor_filter_remap_traces_on_memory",
-		Description: "Tracks the number of traces currently on memory",
+		Description: "Tracks the number of traces currently on memory [Development]",
 		Unit:        "{traces}",
 		Data: metricdata.Gauge[int64]{
 			DataPoints: dps,

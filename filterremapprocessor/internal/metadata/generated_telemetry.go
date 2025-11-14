@@ -13,11 +13,11 @@ import (
 )
 
 func Meter(settings component.TelemetrySettings) metric.Meter {
-	return settings.MeterProvider.Meter("github.com/luke-moehlenbrock/otel-collector-filter-remap-processor/filterremapprocessor")
+	return settings.MeterProvider.Meter("github.com/tf-rob-w/otel-collector-filter-remap-processor/filterremapprocessor")
 }
 
 func Tracer(settings component.TelemetrySettings) trace.Tracer {
-	return settings.TracerProvider.Tracer("github.com/luke-moehlenbrock/otel-collector-filter-remap-processor/filterremapprocessor")
+	return settings.TracerProvider.Tracer("github.com/tf-rob-w/otel-collector-filter-remap-processor/filterremapprocessor")
 }
 
 // TelemetryBuilder provides an interface for components to report telemetry
@@ -71,78 +71,78 @@ func NewTelemetryBuilder(settings component.TelemetrySettings, options ...Teleme
 	var err, errs error
 	builder.ProcessorFilterRemapCountSpansSampled, err = builder.meter.Int64Counter(
 		"otelcol_processor_filter_remap_count_spans_sampled",
-		metric.WithDescription("Count of spans that were sampled or not per filter policy"),
+		metric.WithDescription("Count of spans that were sampled or not per filter policy [Development]"),
 		metric.WithUnit("{spans}"),
 	)
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapForwardQueueOverflows, err = builder.meter.Int64Counter(
 		"otelcol_processor_filter_remap_forward_queue_overflows",
-		metric.WithDescription("Count of times the forward trace channel overflowed"),
+		metric.WithDescription("Count of times the forward trace channel overflowed [Development]"),
 		metric.WithUnit("{traces}"),
 	)
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapForwardTraceLatency, err = builder.meter.Int64Histogram(
 		"otelcol_processor_filter_remap_forward_trace_latency",
-		metric.WithDescription("Latency (in milliseconds) of the trace forwarding process"),
+		metric.WithDescription("Latency (in milliseconds) of the trace forwarding process [Development]"),
 		metric.WithUnit("ms"),
 		metric.WithExplicitBucketBoundaries([]float64{1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000}...),
 	)
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapMaxRetentionTickProcessingTime, err = builder.meter.Int64Histogram(
 		"otelcol_processor_filter_remap_max_retention_tick_processing_time",
-		metric.WithDescription("Time (in milliseconds) for each tick of the max retention of the filter remap processor"),
+		metric.WithDescription("Time (in milliseconds) for each tick of the max retention of the filter remap processor [Development]"),
 		metric.WithUnit("ms"),
 		metric.WithExplicitBucketBoundaries([]float64{1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000}...),
 	)
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapNewTraceIDReceived, err = builder.meter.Int64Counter(
 		"otelcol_processor_filter_remap_new_trace_id_received",
-		metric.WithDescription("Counts the arrival of new traces"),
+		metric.WithDescription("Counts the arrival of new traces [Development]"),
 		metric.WithUnit("{traces}"),
 	)
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapOttlEvaluationError, err = builder.meter.Int64Counter(
 		"otelcol_processor_filter_remap_ottl_evaluation_error",
-		metric.WithDescription("Count of OTTL evaluation errors"),
+		metric.WithDescription("Count of OTTL evaluation errors [Development]"),
 		metric.WithUnit("{errors}"),
 	)
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapSpanDecisionLatency, err = builder.meter.Int64Histogram(
 		"otelcol_processor_filter_remap_span_decision_latency",
-		metric.WithDescription("Latency (in microseconds) of the span decision process for each trace"),
+		metric.WithDescription("Latency (in microseconds) of the span decision process for each trace [Development]"),
 		metric.WithUnit("µs"),
 		metric.WithExplicitBucketBoundaries([]float64{1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000}...),
 	)
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapSpansPerTrace, err = builder.meter.Int64Gauge(
 		"otelcol_processor_filter_remap_spans_per_trace",
-		metric.WithDescription("Count of spans per trace"),
+		metric.WithDescription("Count of spans per trace [Development]"),
 		metric.WithUnit("{spans}"),
 	)
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapTickProcessingTime, err = builder.meter.Int64Histogram(
 		"otelcol_processor_filter_remap_tick_processing_time",
-		metric.WithDescription("Time (in milliseconds) for each tick of the filter remap processor"),
+		metric.WithDescription("Time (in milliseconds) for each tick of the filter remap processor [Development]"),
 		metric.WithUnit("ms"),
 		metric.WithExplicitBucketBoundaries([]float64{1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000}...),
 	)
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapTraceDroppedTooEarly, err = builder.meter.Int64Counter(
 		"otelcol_processor_filter_remap_trace_dropped_too_early",
-		metric.WithDescription("Count of traces that needed to be dropped before the configured wait time"),
+		metric.WithDescription("Count of traces that needed to be dropped before the configured wait time [Development]"),
 		metric.WithUnit("{traces}"),
 	)
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapTraceRemapLatency, err = builder.meter.Int64Histogram(
 		"otelcol_processor_filter_remap_trace_remap_latency",
-		metric.WithDescription("Latency (in microseconds) of the span remapping process for each trace"),
+		metric.WithDescription("Latency (in microseconds) of the span remapping process for each trace [Development]"),
 		metric.WithUnit("µs"),
 		metric.WithExplicitBucketBoundaries([]float64{1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000}...),
 	)
 	errs = errors.Join(errs, err)
 	builder.ProcessorFilterRemapTracesOnMemory, err = builder.meter.Int64Gauge(
 		"otelcol_processor_filter_remap_traces_on_memory",
-		metric.WithDescription("Tracks the number of traces currently on memory"),
+		metric.WithDescription("Tracks the number of traces currently on memory [Development]"),
 		metric.WithUnit("{traces}"),
 	)
 	errs = errors.Join(errs, err)

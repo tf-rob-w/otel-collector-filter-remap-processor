@@ -1,108 +1,234 @@
-type: filter_remap
-
+---
 status:
   class: processor
-  stability:
-    alpha: [traces]
-  distributions: [contrib]
   codeowners:
     active: [luke-moehlenbrock]
-
-tests:
-  config:
-
+  distributions: [contrib]
+  stability:
+    alpha: [traces]
 telemetry:
   metrics:
-    processor_filter_remap_tick_processing_time:
-      description: Time (in milliseconds) for each tick of the filter remap processor
-      unit: ms
-      enabled: true
-      histogram:
-        value_type: int
-        bucket_boundaries: [1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000]
-
-    processor_filter_remap_max_retention_tick_processing_time:
-      description: Time (in milliseconds) for each tick of the max retention of the filter remap processor
-      unit: ms
-      enabled: true
-      histogram:
-        value_type: int
-        bucket_boundaries: [1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000]
-
-    processor_filter_remap_forward_trace_latency:
-      description: Latency (in milliseconds) of the trace forwarding process
-      unit: ms
-      enabled: true
-      histogram:
-        value_type: int
-        bucket_boundaries: [1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000]
-
-    processor_filter_remap_forward_queue_overflows:
-      description: Count of times the forward trace channel overflowed
-      unit: "{traces}"
-      enabled: true
-      sum:
-        value_type: int
-        monotonic: true
-
-    processor_filter_remap_trace_remap_latency: # Done
-      description: Latency (in microseconds) of the span remapping process for each trace
-      unit: µs
-      enabled: true
-      histogram:
-        value_type: int
-        bucket_boundaries: [1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000]
-
-    processor_filter_remap_span_decision_latency: # Done
-      description: Latency (in microseconds) of the span decision process for each trace
-      unit: µs
-      enabled: true
-      histogram:
-        value_type: int
-        bucket_boundaries: [1, 2, 5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000]
-
-    processor_filter_remap_ottl_evaluation_error: # Done
-      description: Count of OTTL evaluation errors
-      unit: "{errors}"
-      enabled: true
-      sum:
-        value_type: int
-        monotonic: true
-
-    processor_filter_remap_new_trace_id_received: # Done
-      description: Counts the arrival of new traces
-      unit: "{traces}"
-      enabled: true
-      sum:
-        value_type: int
-        monotonic: true
-
-    processor_filter_remap_traces_on_memory: # Done
-      description: Tracks the number of traces currently on memory
-      unit: "{traces}"
-      enabled: true
-      gauge:
-        value_type: int
-
-    processor_filter_remap_trace_dropped_too_early:
-      description: Count of traces that needed to be dropped before the configured wait time
-      unit: "{traces}"
-      enabled: true
-      sum:
-        value_type: int
-        monotonic: true
-
     processor_filter_remap_count_spans_sampled:
       description: Count of spans that were sampled or not per filter policy
-      unit: "{spans}"
       enabled: true
       sum:
-        value_type: int
         monotonic: true
-
+        value_type: int
+      unit: "{spans}"
+      stability:
+        level: development
+    processor_filter_remap_forward_queue_overflows:
+      description: Count of times the forward trace channel overflowed
+      enabled: true
+      sum:
+        monotonic: true
+        value_type: int
+      unit: "{traces}"
+      stability:
+        level: development
+    processor_filter_remap_forward_trace_latency:
+      description: Latency (in milliseconds) of the trace forwarding process
+      enabled: true
+      histogram:
+        bucket_boundaries:
+          - 1
+          - 2
+          - 5
+          - 10
+          - 25
+          - 50
+          - 75
+          - 100
+          - 150
+          - 200
+          - 300
+          - 400
+          - 500
+          - 750
+          - 1000
+          - 2000
+          - 3000
+          - 4000
+          - 5000
+          - 10000
+          - 20000
+          - 30000
+          - 50000
+        value_type: int
+      unit: ms
+      stability:
+        level: development
+    processor_filter_remap_max_retention_tick_processing_time:
+      description: Time (in milliseconds) for each tick of the max retention of the filter remap processor
+      enabled: true
+      histogram:
+        bucket_boundaries:
+          - 1
+          - 2
+          - 5
+          - 10
+          - 25
+          - 50
+          - 75
+          - 100
+          - 150
+          - 200
+          - 300
+          - 400
+          - 500
+          - 750
+          - 1000
+          - 2000
+          - 3000
+          - 4000
+          - 5000
+          - 10000
+          - 20000
+          - 30000
+          - 50000
+        value_type: int
+      unit: ms
+      stability:
+        level: development
+    processor_filter_remap_new_trace_id_received:
+      description: Counts the arrival of new traces
+      enabled: true
+      sum:
+        monotonic: true
+        value_type: int
+      unit: "{traces}"
+      stability:
+        level: development
+    processor_filter_remap_ottl_evaluation_error:
+      description: Count of OTTL evaluation errors
+      enabled: true
+      sum:
+        monotonic: true
+        value_type: int
+      unit: "{errors}"
+      stability:
+        level: development
+    processor_filter_remap_span_decision_latency:
+      description: Latency (in microseconds) of the span decision process for each trace
+      enabled: true
+      histogram:
+        bucket_boundaries:
+          - 1
+          - 2
+          - 5
+          - 10
+          - 25
+          - 50
+          - 75
+          - 100
+          - 150
+          - 200
+          - 300
+          - 400
+          - 500
+          - 750
+          - 1000
+          - 2000
+          - 3000
+          - 4000
+          - 5000
+          - 10000
+          - 20000
+          - 30000
+          - 50000
+        value_type: int
+      unit: µs
+      stability:
+        level: development
     processor_filter_remap_spans_per_trace:
       description: Count of spans per trace
-      unit: "{spans}"
       enabled: true
       gauge:
         value_type: int
+      unit: "{spans}"
+      stability:
+        level: development
+    processor_filter_remap_tick_processing_time:
+      description: Time (in milliseconds) for each tick of the filter remap processor
+      enabled: true
+      histogram:
+        bucket_boundaries:
+          - 1
+          - 2
+          - 5
+          - 10
+          - 25
+          - 50
+          - 75
+          - 100
+          - 150
+          - 200
+          - 300
+          - 400
+          - 500
+          - 750
+          - 1000
+          - 2000
+          - 3000
+          - 4000
+          - 5000
+          - 10000
+          - 20000
+          - 30000
+          - 50000
+        value_type: int
+      unit: ms
+      stability:
+        level: development
+    processor_filter_remap_trace_dropped_too_early:
+      description: Count of traces that needed to be dropped before the configured wait time
+      enabled: true
+      sum:
+        monotonic: true
+        value_type: int
+      unit: "{traces}"
+      stability:
+        level: development
+    processor_filter_remap_trace_remap_latency:
+      description: Latency (in microseconds) of the span remapping process for each trace
+      enabled: true
+      histogram:
+        bucket_boundaries:
+          - 1
+          - 2
+          - 5
+          - 10
+          - 25
+          - 50
+          - 75
+          - 100
+          - 150
+          - 200
+          - 300
+          - 400
+          - 500
+          - 750
+          - 1000
+          - 2000
+          - 3000
+          - 4000
+          - 5000
+          - 10000
+          - 20000
+          - 30000
+          - 50000
+        value_type: int
+      unit: µs
+      stability:
+        level: development
+    processor_filter_remap_traces_on_memory:
+      description: Tracks the number of traces currently on memory
+      enabled: true
+      gauge:
+        value_type: int
+      unit: "{traces}"
+      stability:
+        level: development
+tests:
+  config: null
+type: filter_remap

@@ -8,96 +8,96 @@ The following telemetry is emitted by this component.
 
 ### otelcol_processor_filter_remap_count_spans_sampled
 
-Count of spans that were sampled or not per filter policy
+Count of spans that were sampled or not per filter policy [Development]
 
-| Unit | Metric Type | Value Type | Monotonic |
-| ---- | ----------- | ---------- | --------- |
-| {spans} | Sum | Int | true |
+| Unit | Metric Type | Value Type | Monotonic | Stability |
+| ---- | ----------- | ---------- | --------- | --------- |
+| {spans} | Sum | Int | true | Development |
 
 ### otelcol_processor_filter_remap_forward_queue_overflows
 
-Count of times the forward trace channel overflowed
+Count of times the forward trace channel overflowed [Development]
 
-| Unit | Metric Type | Value Type | Monotonic |
-| ---- | ----------- | ---------- | --------- |
-| {traces} | Sum | Int | true |
+| Unit | Metric Type | Value Type | Monotonic | Stability |
+| ---- | ----------- | ---------- | --------- | --------- |
+| {traces} | Sum | Int | true | Development |
 
 ### otelcol_processor_filter_remap_forward_trace_latency
 
-Latency (in milliseconds) of the trace forwarding process
+Latency (in milliseconds) of the trace forwarding process [Development]
 
-| Unit | Metric Type | Value Type |
-| ---- | ----------- | ---------- |
-| ms | Histogram | Int |
+| Unit | Metric Type | Value Type | Stability |
+| ---- | ----------- | ---------- | --------- |
+| ms | Histogram | Int | Development |
 
 ### otelcol_processor_filter_remap_max_retention_tick_processing_time
 
-Time (in milliseconds) for each tick of the max retention of the filter remap processor
+Time (in milliseconds) for each tick of the max retention of the filter remap processor [Development]
 
-| Unit | Metric Type | Value Type |
-| ---- | ----------- | ---------- |
-| ms | Histogram | Int |
+| Unit | Metric Type | Value Type | Stability |
+| ---- | ----------- | ---------- | --------- |
+| ms | Histogram | Int | Development |
 
 ### otelcol_processor_filter_remap_new_trace_id_received
 
-Counts the arrival of new traces
+Counts the arrival of new traces [Development]
 
-| Unit | Metric Type | Value Type | Monotonic |
-| ---- | ----------- | ---------- | --------- |
-| {traces} | Sum | Int | true |
+| Unit | Metric Type | Value Type | Monotonic | Stability |
+| ---- | ----------- | ---------- | --------- | --------- |
+| {traces} | Sum | Int | true | Development |
 
 ### otelcol_processor_filter_remap_ottl_evaluation_error
 
-Count of OTTL evaluation errors
+Count of OTTL evaluation errors [Development]
 
-| Unit | Metric Type | Value Type | Monotonic |
-| ---- | ----------- | ---------- | --------- |
-| {errors} | Sum | Int | true |
+| Unit | Metric Type | Value Type | Monotonic | Stability |
+| ---- | ----------- | ---------- | --------- | --------- |
+| {errors} | Sum | Int | true | Development |
 
 ### otelcol_processor_filter_remap_span_decision_latency
 
-Latency (in microseconds) of the span decision process for each trace
+Latency (in microseconds) of the span decision process for each trace [Development]
 
-| Unit | Metric Type | Value Type |
-| ---- | ----------- | ---------- |
-| µs | Histogram | Int |
+| Unit | Metric Type | Value Type | Stability |
+| ---- | ----------- | ---------- | --------- |
+| µs | Histogram | Int | Development |
 
 ### otelcol_processor_filter_remap_spans_per_trace
 
-Count of spans per trace
+Count of spans per trace [Development]
 
-| Unit | Metric Type | Value Type |
-| ---- | ----------- | ---------- |
-| {spans} | Gauge | Int |
+| Unit | Metric Type | Value Type | Stability |
+| ---- | ----------- | ---------- | --------- |
+| {spans} | Gauge | Int | Development |
 
 ### otelcol_processor_filter_remap_tick_processing_time
 
-Time (in milliseconds) for each tick of the filter remap processor
+Time (in milliseconds) for each tick of the filter remap processor [Development]
 
-| Unit | Metric Type | Value Type |
-| ---- | ----------- | ---------- |
-| ms | Histogram | Int |
+| Unit | Metric Type | Value Type | Stability |
+| ---- | ----------- | ---------- | --------- |
+| ms | Histogram | Int | Development |
 
 ### otelcol_processor_filter_remap_trace_dropped_too_early
 
-Count of traces that needed to be dropped before the configured wait time
+Count of traces that needed to be dropped before the configured wait time [Development]
 
-| Unit | Metric Type | Value Type | Monotonic |
-| ---- | ----------- | ---------- | --------- |
-| {traces} | Sum | Int | true |
+| Unit | Metric Type | Value Type | Monotonic | Stability |
+| ---- | ----------- | ---------- | --------- | --------- |
+| {traces} | Sum | Int | true | Development |
 
 ### otelcol_processor_filter_remap_trace_remap_latency
 
-Latency (in microseconds) of the span remapping process for each trace
+Latency (in microseconds) of the span remapping process for each trace [Development]
 
-| Unit | Metric Type | Value Type |
-| ---- | ----------- | ---------- |
-| µs | Histogram | Int |
+| Unit | Metric Type | Value Type | Stability |
+| ---- | ----------- | ---------- | --------- |
+| µs | Histogram | Int | Development |
 
 ### otelcol_processor_filter_remap_traces_on_memory
 
-Tracks the number of traces currently on memory
+Tracks the number of traces currently on memory [Development]
 
-| Unit | Metric Type | Value Type |
-| ---- | ----------- | ---------- |
-| {traces} | Gauge | Int |
+| Unit | Metric Type | Value Type | Stability |
+| ---- | ----------- | ---------- | --------- |
+| {traces} | Gauge | Int | Development |

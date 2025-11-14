@@ -10,7 +10,7 @@ import (
 	"go.opentelemetry.io/otel/sdk/metric/metricdata"
 	"go.opentelemetry.io/otel/sdk/metric/metricdata/metricdatatest"
 
-	"github.com/luke-moehlenbrock/otel-collector-filter-remap-processor/filterremapprocessor/internal/metadata"
+	"github.com/tf-rob-w/otel-collector-filter-remap-processor/filterremapprocessor/internal/metadata"
 	"go.opentelemetry.io/collector/component/componenttest"
 )
 

@@ -8,7 +8,7 @@ import (
 
 var (
 	Type      = component.MustNewType("filter_remap")
-	ScopeName = "github.com/luke-moehlenbrock/otel-collector-filter-remap-processor/filterremapprocessor"
+	ScopeName = "github.com/tf-rob-w/otel-collector-filter-remap-processor/filterremapprocessor"
 )
 
 const (
